@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.ScatterChart?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.tbest.simplegraphapplication.HelloController"
+            stylesheets="@../css/view.css">
+    <top>
+        <HBox alignment="CENTER">
+            <TextField fx:id="username" promptText="Lichess username"/>
+            <Spinner fx:id="minRatingDays" min="0" max="10000" initialValue="60" amountToStepBy="10">
+            </Spinner>
+            <Button text="Add" onAction="#onSubmitButtonClick"/>
+            <Button text="Clear" onAction="#onClearButtonClick"/>
+        </HBox>
+    </top>
+    <center>
+        <ScatterChart fx:id="chart">
+            <xAxis>
+                <CategoryAxis side="BOTTOM"/>
+            </xAxis>
+            <yAxis>
+                <NumberAxis side="LEFT"/>
+            </yAxis>
+        </ScatterChart>
+    </center>
+</BorderPane>
