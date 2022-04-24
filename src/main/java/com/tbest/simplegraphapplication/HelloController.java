@@ -7,7 +7,7 @@ import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
@@ -16,27 +16,25 @@ import java.util.function.Consumer;
 
 public class HelloController {
     @FXML
-    ScatterChart chart;
-    @FXML
-    private Label welcomeText;
+    private ScatterChart chart;
+
     @FXML
     private TextField username;
 
     @FXML
-    protected void onHelloButtonClick() {
-        welcomeText.setText("Welcome to JavaFX Application!");
-    }
+    private Spinner minRatingDays;
+
 
     @FXML
     protected void onSubmitButtonClick() {
-        ScatterChart(chart, username.getText().toLowerCase());
+        System.out.println(minRatingDays.getValue());
+        minRatingDays.commitValue();
+        System.out.println(minRatingDays.getValue());
 
-        System.out.println(username.getText().toLowerCase());
+        ScatterChart(chart, username.getText().toLowerCase());
     }
 
     private ScatterChart<String, Number> ScatterChart(ScatterChart scatterChart, String user) {
-
-        int minRatingDays = 60;
         var client = Client.basic();
         var Result = client.users().ratingHistoryById(user);
 
@@ -51,15 +49,16 @@ public class HelloController {
         Consumer<RatingHistory> addPoint = RatingHistory -> {
             //Prepare XYChart.Series objects by setting data
             XYChart.Series series = new XYChart.Series();
-            series.setName(RatingHistory.name());
+            series.setName(username.getText() + RatingHistory.name());
             for (chariot.model.RatingHistory.DateResult dateResult : RatingHistory.results()) {
                 //    System.out.println(dateResult.date() + " " + dateResult.points());
                 series.getData().add(new XYChart.Data(dateResult.date().toString(), dateResult.points()));
 
             }
             //Only include categorises with minRatingDays or more points
-            System.out.println(RatingHistory.name() + " " + series.getData().size());
-            if (series.getData().size() > minRatingDays) {
+
+            System.out.println(RatingHistory.name() + " : " + series.getData().size());
+            if (series.getData().size() > (Integer) minRatingDays.getValue()) {
                 //Setting the data to scatter chart
                 scatterChart.getData().addAll(series);
             }
@@ -75,5 +74,9 @@ public class HelloController {
         scatterChart.setEffect(shadow);
 
         return scatterChart;
+    }
+
+    @FXML
+    private void onClearButtonClick() {
     }
 }
