@@ -9,9 +9,10 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.tbest.simplegraphapplication.HelloController"
-            stylesheets="@../css/view.css">
+            stylesheets="@../css/view.css" styleClass="background">
     <top>
         <HBox alignment="CENTER">
+
             <TextField fx:id="username" promptText="Lichess username"/>
             <Spinner fx:id="minRatingDays" min="0" max="10000" initialValue="60" amountToStepBy="10">
             </Spinner>
@@ -20,12 +21,14 @@
         </HBox>
     </top>
     <center>
-        <ScatterChart fx:id="chart">
+        <!--animated="false" is a workaround for https://bugs.openjdk.java.net/browse/JDK-8198830
+         https://stackoverflow.com/questions/48995257/javafx-barchart-xaxis-labels-bad-positioning-->
+        <ScatterChart styleClass="chart" fx:id="chart" animated="false" verticalGridLinesVisible="false">
             <xAxis>
-                <CategoryAxis side="BOTTOM"/>
+                <CategoryAxis side="BOTTOM" label="Time"/>
             </xAxis>
             <yAxis>
-                <NumberAxis side="LEFT"/>
+                <NumberAxis side="LEFT" label="Points"/>
             </yAxis>
         </ScatterChart>
     </center>
