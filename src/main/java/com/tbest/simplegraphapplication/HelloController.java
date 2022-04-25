@@ -70,4 +70,9 @@ public class HelloController {
         chart.setTitle(null);
         System.out.println("clear clicked");
     }
+
+    @FXML
+    private void onCloseButtonClick() {
+        System.exit(0);
+    }
 }

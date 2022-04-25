@@ -24,6 +24,7 @@
             </Spinner>
             <Button text="Add user" onAction="#onSubmitButtonClick"/>
             <Button text="Clear Chart" onAction="#onClearButtonClick"/>
+            <Button text="Close" onAction="#onCloseButtonClick" alignment="TOP_RIGHT"></Button>
         </HBox>
     </top>
     <center>
