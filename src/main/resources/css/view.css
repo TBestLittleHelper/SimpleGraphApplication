@@ -1,10 +1,11 @@
 .background{
     -fx-background-image: url(https://raw.githubusercontent.com/lichess-org/lila/master/public/logo/lichess-stripe.png);
+    -fx-background-size: contain;
+    -fx-background-position: center;
 }
 
 .chart{
     -fx-background-color: transparent;
-    -fx-padding: 10px;
 }
 .chart-plot-background {
     -fx-background-color: transparent;
