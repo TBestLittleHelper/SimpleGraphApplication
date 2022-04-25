@@ -1,3 +1,8 @@
+.root{
+    -fx-font-size: 12pt;
+    -fx-font-weight: bold;
+}
+
 .background{
     -fx-background-image: url(https://raw.githubusercontent.com/lichess-org/lila/master/public/logo/lichess-stripe.png);
     -fx-background-size: contain;
