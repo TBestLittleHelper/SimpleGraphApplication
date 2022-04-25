@@ -3,32 +3,66 @@ package com.tbest.simplegraphapplication;
 import chariot.Client;
 import chariot.model.RatingHistory;
 import javafx.fxml.FXML;
-import javafx.scene.chart.ScatterChart;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
+import javafx.util.StringConverter;
 
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.function.Consumer;
 
 public class HelloController {
     @FXML
-    private ScatterChart<String, Integer> chart;
+    private LineChart<Long, Integer> chart;
+
+    @FXML
+    private NumberAxis xAxis;
 
     @FXML
     private TextField username;
 
     @FXML
+    private Button submitButton;
+
+    @FXML
     private Spinner<?> minRatingDays;
 
+    public void initialize() {
+        xAxis.setAutoRanging(true);
+        xAxis.setForceZeroInRange(false);
+        xAxis.setTickLabelFormatter(new StringConverter<Number>() {
+            @Override
+            public String toString(Number number) {
+                long epoch = number.longValue();
+
+                DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy MM dd");
+                ZonedDateTime zonedDateTime = Instant.ofEpochSecond(epoch).atZone(ZoneId.of("Europe/Paris"));
+                return zonedDateTime.format(dateTimeFormatter);
+            }
+
+            @Override
+            public Long fromString(String s) {
+
+                return Long.valueOf(0);
+            }
+
+        });
+    }
 
     @FXML
     protected void onSubmitButtonClick() {
         // Username to lower case, since with the lichess api the ID is always lower case
-        UpdateScatterChart(chart, username.getText().toLowerCase());
+        submitButton.setDisable(true);
+        UpdateLineChart(chart, username.getText().toLowerCase());
+        submitButton.setDisable(false);
     }
 
-    private void UpdateScatterChart(ScatterChart<String, Integer> scatterChart, String user) {
+    private void UpdateLineChart(LineChart<Long, Integer> lineChart, String user) {
         var client = Client.basic();
         if (client.users().byId(user).isPresent() == false) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "User not found");
@@ -40,27 +74,30 @@ public class HelloController {
 
         Consumer<RatingHistory> addPoint = RatingHistory -> {
             //Prepare XYChart.Series objects by setting data
-            XYChart.Series<String, Integer> series = new XYChart.Series<>();
+            XYChart.Series<Long, Integer> series = new XYChart.Series<>();
             series.setName(displayName + " " + RatingHistory.name());
             for (chariot.model.RatingHistory.DateResult dateResult : RatingHistory.results()) {
-                //    System.out.println(dateResult.date() + " " + dateResult.points());
-                series.getData().add(new XYChart.Data<>(dateResult.date().toString(), dateResult.points()));
+                series.getData().add(new XYChart.Data<>(dateResult.date().toEpochSecond(LocalTime.MIN, ZoneOffset.UTC), dateResult.points()));
             }
 
             //Only include categorises with minRatingDays or more points
             System.out.println(RatingHistory.name() + " : " + series.getData().size());
             if (series.getData().size() > (Integer) minRatingDays.getValue()) {
+
                 //Setting the data to scatter chart
-                scatterChart.getData().addAll(series);
+                lineChart.getData().addAll(series);
+                lineChart.getXAxis().setAutoRanging(true);
             }
         };
         Result.stream().forEach(addPoint);
+        lineChart.getXAxis().setAutoRanging(true);
+
 
         //Update the chart title
-        if (scatterChart.getTitle() != null) {
-            scatterChart.setTitle(scatterChart.getTitle() + " " + displayName);
+        if (lineChart.getTitle() != null) {
+            lineChart.setTitle(lineChart.getTitle() + " " + displayName);
         } else {
-            scatterChart.setTitle(displayName);
+            lineChart.setTitle(displayName);
         }
     }
 

@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
-<?import javafx.scene.chart.ScatterChart?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -22,7 +21,7 @@
             </Label>
             <Spinner fx:id="minRatingDays" min="0" max="10000" initialValue="60" amountToStepBy="10">
             </Spinner>
-            <Button text="Add user" onAction="#onSubmitButtonClick"/>
+            <Button fx:id="submitButton" text="Add user" onAction="#onSubmitButtonClick"/>
             <Button text="Clear Chart" onAction="#onClearButtonClick"/>
             <Button text="Close" onAction="#onCloseButtonClick" alignment="TOP_RIGHT"></Button>
         </HBox>
@@ -30,13 +29,13 @@
     <center>
         <!--animated="false" is a workaround for https://bugs.openjdk.java.net/browse/JDK-8198830
          https://stackoverflow.com/questions/48995257/javafx-barchart-xaxis-labels-bad-positioning-->
-        <ScatterChart styleClass="chart" fx:id="chart" animated="false" verticalGridLinesVisible="false">
+        <LineChart styleClass="chart" fx:id="chart" animated="false" verticalGridLinesVisible="false">
             <xAxis>
-                <CategoryAxis side="BOTTOM" label="Time"/>
+                <NumberAxis fx:id="xAxis" side="BOTTOM" label="Time"/>
             </xAxis>
             <yAxis>
                 <NumberAxis side="LEFT" label="Points"/>
             </yAxis>
-        </ScatterChart>
+        </LineChart>
     </center>
 </BorderPane>
