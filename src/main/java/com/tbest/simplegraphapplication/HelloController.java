@@ -56,7 +56,7 @@ public class HelloController {
         };
         Result.stream().forEach(addPoint);
 
-        //Styling the chart
+        //Update the chart title
         if (scatterChart.getTitle() != null) {
             scatterChart.setTitle(scatterChart.getTitle() + " " + displayName);
         } else {
