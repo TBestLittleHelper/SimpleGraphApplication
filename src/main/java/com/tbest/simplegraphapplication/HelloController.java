@@ -8,8 +8,6 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.paint.Color;
 
 import java.util.function.Consumer;
 
@@ -64,10 +62,6 @@ public class HelloController {
         } else {
             scatterChart.setTitle(displayName);
         }
-        final DropShadow shadow = new DropShadow();
-        shadow.setOffsetX(2);
-        shadow.setColor(Color.GREY);
-        scatterChart.setEffect(shadow);
     }
 
     @FXML
