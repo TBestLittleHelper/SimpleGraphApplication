@@ -72,7 +72,8 @@ public class HelloController {
 
     @FXML
     private void onClearButtonClick() {
-        chart.getData().removeAll();
+        chart.getData().clear();
+        chart.setTitle(null);
         System.out.println("clear clicked");
     }
 }
