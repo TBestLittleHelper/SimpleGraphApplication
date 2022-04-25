@@ -15,7 +15,7 @@
             <TextField fx:id="username" promptText="Lichess username">
 
             </TextField>
-            <Label text="Minimum rating days">
+            <Label text="Minimum rated days">
                 <padding>
                     <Insets left="20"></Insets>
                 </padding>
