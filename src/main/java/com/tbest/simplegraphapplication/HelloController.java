@@ -7,7 +7,6 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
 import javafx.util.StringConverter;
@@ -27,14 +26,9 @@ public class HelloController {
     private TextField username;
 
     @FXML
-    private Button submitButton;
-
-    @FXML
     private Spinner<?> minRatingDays;
 
     public void initialize() {
-        xAxis.setAutoRanging(true);
-        xAxis.setForceZeroInRange(false);
         xAxis.setTickLabelFormatter(new StringConverter<>() {
             @Override
             public String toString(Number number) {
@@ -57,12 +51,12 @@ public class HelloController {
     @FXML
     protected void onSubmitButtonClick() {
         // Username to lower case, since with the lichess api the ID is always lower case
-        submitButton.setDisable(true);
         UpdateLineChart(chart, username.getText().toLowerCase());
-        submitButton.setDisable(false);
     }
 
-    private void UpdateLineChart(LineChart<Long, Integer> lineChart, String user) {
+    //We are requesting from the API, so only want to send one request at a time
+    private synchronized void UpdateLineChart(LineChart<Long, Integer> lineChart, String user) {
+        System.out.println("Requesting " + user);
         var client = Client.basic();
         if (!client.users().byId(user).isPresent()) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "User not found");
