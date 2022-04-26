@@ -19,7 +19,7 @@
                     <Insets left="20"></Insets>
                 </padding>
             </Label>
-            <Spinner fx:id="minRatingDays" min="0" max="10000" initialValue="60" amountToStepBy="10">
+            <Spinner fx:id="minRatingDays" min="10" max="10000" initialValue="90" amountToStepBy="10">
             </Spinner>
             <Button fx:id="submitButton" text="Add user" onAction="#onSubmitButtonClick"/>
             <Button text="Clear Chart" onAction="#onClearButtonClick"/>
@@ -31,7 +31,7 @@
          https://stackoverflow.com/questions/48995257/javafx-barchart-xaxis-labels-bad-positioning-->
         <LineChart styleClass="chart" fx:id="chart" animated="false" verticalGridLinesVisible="false">
             <xAxis>
-                <NumberAxis fx:id="xAxis" side="BOTTOM" label="Time"/>
+                <NumberAxis fx:id="xAxis" side="BOTTOM"/>
             </xAxis>
             <yAxis>
                 <NumberAxis side="LEFT" label="Points"/>
