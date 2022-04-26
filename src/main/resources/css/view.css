@@ -8,16 +8,13 @@
     -fx-background-size: contain;
     -fx-background-position: center;
 }
-
 .chart{
     -fx-padding: 10px;
     -fx-background-color: transparent;
 }
 .chart-title{
      -fx-text-fill: royalblue;
-  -fx-font-size: 2em;
-
-
+     -fx-font-size: 2em;
 }
 .chart-content {
     -fx-padding: 30px;
