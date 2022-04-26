@@ -35,12 +35,12 @@ public class HelloController {
     public void initialize() {
         xAxis.setAutoRanging(true);
         xAxis.setForceZeroInRange(false);
-        xAxis.setTickLabelFormatter(new StringConverter<Number>() {
+        xAxis.setTickLabelFormatter(new StringConverter<>() {
             @Override
             public String toString(Number number) {
                 long epoch = number.longValue();
 
-                DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy MM dd");
+                DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("MMM yyyy");
                 ZonedDateTime zonedDateTime = Instant.ofEpochSecond(epoch).atZone(ZoneId.of("Europe/Paris"));
                 return zonedDateTime.format(dateTimeFormatter);
             }
@@ -48,7 +48,7 @@ public class HelloController {
             @Override
             public Long fromString(String s) {
 
-                return Long.valueOf(0);
+                return 0L;
             }
 
         });
@@ -64,7 +64,7 @@ public class HelloController {
 
     private void UpdateLineChart(LineChart<Long, Integer> lineChart, String user) {
         var client = Client.basic();
-        if (client.users().byId(user).isPresent() == false) {
+        if (!client.users().byId(user).isPresent()) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "User not found");
             alert.show();
             return;
@@ -81,17 +81,14 @@ public class HelloController {
             }
 
             //Only include categorises with minRatingDays or more points
-            System.out.println(RatingHistory.name() + " : " + series.getData().size());
             if (series.getData().size() > (Integer) minRatingDays.getValue()) {
+                System.out.println(RatingHistory.name() + " : " + series.getData().size());
 
                 //Setting the data to scatter chart
-                lineChart.getData().addAll(series);
-                lineChart.getXAxis().setAutoRanging(true);
+                lineChart.getData().add(series);
             }
         };
         Result.stream().forEach(addPoint);
-        lineChart.getXAxis().setAutoRanging(true);
-
 
         //Update the chart title
         if (lineChart.getTitle() != null) {
@@ -105,7 +102,6 @@ public class HelloController {
     private void onClearButtonClick() {
         chart.getData().clear();
         chart.setTitle(null);
-        System.out.println("clear clicked");
     }
 
     @FXML
