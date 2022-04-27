@@ -6,8 +6,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.tbest.simplegraphapplication.HelloController"
-            stylesheets="@../css/view.css" styleClass="background">
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" styleClass="background" stylesheets="@../css/view.css"
+            xmlns="http://javafx.com/javafx/16" fx:controller="com.tbest.simplegraphapplication.HelloController">
     <top>
         <HBox alignment="CENTER">
 
@@ -16,25 +16,26 @@
             </TextField>
             <Label text="Minimum rated days">
                 <padding>
-                    <Insets left="20"></Insets>
+                    <Insets left="20"/>
                 </padding>
             </Label>
-            <Spinner fx:id="minRatingDays" min="10" max="10000" initialValue="90" amountToStepBy="10">
+            <Spinner fx:id="minRatingDays" amountToStepBy="10" initialValue="90" max="10000" min="10">
             </Spinner>
-            <Button text="Add user" onAction="#onSubmitButtonClick"/>
-            <Button text="Clear Chart" onAction="#onClearButtonClick"/>
-            <Button text="Close" onAction="#onCloseButtonClick" alignment="TOP_RIGHT"></Button>
+            <Button onAction="#onSubmitButtonClick" text="Add user"/>
+            <Button onAction="#onClearButtonClick" text="Clear Chart"/>
+            <Button alignment="TOP_RIGHT" onAction="#onCloseButtonClick" text="Close"/>
         </HBox>
     </top>
     <center>
         <!--animated="false" is a workaround for https://bugs.openjdk.java.net/browse/JDK-8198830
          https://stackoverflow.com/questions/48995257/javafx-barchart-xaxis-labels-bad-positioning-->
-        <LineChart styleClass="chart" fx:id="chart" animated="false" verticalGridLinesVisible="false">
+        <LineChart fx:id="chart" animated="false" styleClass="chart" verticalGridLinesVisible="false"
+                   legendVisible="false">
             <xAxis>
-                <NumberAxis fx:id="xAxis" side="BOTTOM" forceZeroInRange="false"/>
+                <NumberAxis forceZeroInRange="false" side="BOTTOM" fx:id="xAxis"/>
             </xAxis>
             <yAxis>
-                <NumberAxis side="LEFT" forceZeroInRange="false" lowerBound="600" upperBound="3400"></NumberAxis>
+                <NumberAxis forceZeroInRange="false" lowerBound="600" side="LEFT" upperBound="3400"/>
             </yAxis>
         </LineChart>
     </center>
