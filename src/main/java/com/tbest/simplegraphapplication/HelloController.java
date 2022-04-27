@@ -3,6 +3,7 @@ package com.tbest.simplegraphapplication;
 import chariot.Client;
 import chariot.model.RatingHistory;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
@@ -57,14 +58,14 @@ public class HelloController {
     //We are requesting from the API, so only want to send one request at a time
     private synchronized void UpdateLineChart(LineChart<Long, Integer> lineChart, String user) {
         System.out.println("Requesting " + user);
-        var client = Client.basic();
+        final var client = Client.basic();
         if (!client.users().byId(user).isPresent()) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "User not found");
             alert.show();
             return;
         }
-        String displayName = client.users().byId(user).get().username();
-        var Result = client.users().ratingHistoryById(user);
+        final String displayName = client.users().byId(user).get().username();
+        final var Result = client.users().ratingHistoryById(user);
 
         Consumer<RatingHistory> addPoint = RatingHistory -> {
             //Prepare XYChart.Series objects by setting data
@@ -78,15 +79,44 @@ public class HelloController {
             if (series.getData().size() > (Integer) minRatingDays.getValue()) {
                 System.out.println(RatingHistory.name() + " : " + series.getData().size());
 
+
                 //Setting the data to scatter chart
                 lineChart.getData().add(series);
+
+
+                //Set color for series, nodes and legend.
+                final String color = getColor(RatingHistory.name());
+                System.out.println(color);
+
+
+                //Style nodes
+                int index = 0;
+                while (index < series.getData().size()) {
+                    XYChart.Data<Long, Integer> dataPoint = series.getData().get(index);
+                    Node lineSymbol = dataPoint.getNode().lookup(".chart-line-symbol");
+                    lineSymbol.setStyle("-fx-background-radius: 10px; -fx-background-color: " + color);
+//-fx-shape: M40,60 C42,48 44,30 25,32 Z;
+                    index++;
+                }
+                //Color lines
+                StringBuilder seriesStyleString = new StringBuilder("-fx-stroke-width: 3; -fx-stroke: " + color);
+                series.getNode().setStyle(seriesStyleString.toString());
+
+                //Color chart legend
+                for (Node n : chart.getChildrenUnmodifiable()) {
+                    if (n.getClass().getSimpleName() == "Legend") {
+                        // n.setStyle("-fx-background-color: #0000ff, " + color);
+                    }
+
+                }
+
             }
         };
         Result.stream().forEach(addPoint);
 
         //Update the chart title
         if (lineChart.getTitle() != null) {
-            lineChart.setTitle(lineChart.getTitle() + " " + displayName);
+            lineChart.setTitle(lineChart.getTitle() + ", " + displayName);
         } else {
             lineChart.setTitle(displayName);
         }
@@ -102,4 +132,21 @@ public class HelloController {
     private void onCloseButtonClick() {
         System.exit(0);
     }
+
+    private String getColor(String variant) {
+        return switch (variant) {
+            case "Bullet" -> "RED";
+            case "Blitz" -> "BLUE";
+            case "Rapid" -> "LIGHTSTEELBLUE";
+            case "Classical" -> "GREEN";
+            case "Chess960" -> "DEEPPINK";
+            case "Atomic" -> "FIREBRICK";
+            case "Racing Kings" -> "GOLD";
+            case "Crazyhouse" -> "BLUEVIOLET";
+            case "Puzzles" -> "LIGHTGOLDENRODYELLOW";
+
+            default -> "GRAY";
+        };
+    }
+
 }
