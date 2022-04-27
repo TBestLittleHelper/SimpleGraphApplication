@@ -148,5 +148,4 @@ public class HelloController {
             default -> "GRAY";
         };
     }
-
 }
