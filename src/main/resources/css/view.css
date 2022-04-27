@@ -14,18 +14,10 @@
 }
 .chart-title{
      -fx-text-fill: royalblue;
-     -fx-font-size: 2em;
+     -fx-font-size: 1.5em;
 }
 .chart-content {
     -fx-padding: 30px;
-}
-.chart-legend {
-   -fx-background-color:  transparent;
-   -fx-padding: 20px;
-}
-
-.chart-legend-item-symbol{
-   -fx-background-radius: 0;
 }
 .chart-legend-item{
     -fx-text-fill: royalblue;
@@ -35,11 +27,6 @@
 }
 .chart-series-line {
     -fx-stroke-width: 3px;
-}
-.chart-line-symbol {
-   -fx-background-radius: 10px;
-   -fx-padding: 2px;
-   -fx-shape: "M5,0 L10,8 L0,8 Z"
 }
 .axis {
     -fx-font-size: 1.4em;
