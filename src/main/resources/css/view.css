@@ -19,8 +19,14 @@
 .chart-content {
     -fx-padding: 30px;
 }
+.chart-legend {
+   -fx-background-color:  transparent;
+}
 .chart-legend-item{
     -fx-text-fill: royalblue;
+}
+.chart-legend-item-symbol{
+   -fx-background-radius: 0;
 }
 .chart-plot-background {
     -fx-background-color: transparent;
