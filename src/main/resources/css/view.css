@@ -9,7 +9,7 @@
     -fx-background-position: center;
 }
 .chart{
-    -fx-padding: 10px;
+    -fx-padding: 0px;
     -fx-background-color: transparent;
 }
 .chart-title{
@@ -21,9 +21,6 @@
 }
 .chart-legend {
    -fx-background-color:  transparent;
-}
-.chart-legend-item{
-    -fx-text-fill: royalblue;
 }
 .chart-legend-item-symbol{
    -fx-background-radius: 0;
