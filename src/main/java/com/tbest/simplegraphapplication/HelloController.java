@@ -9,14 +9,17 @@ import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.effect.Glow;
+import javafx.scene.effect.Reflection;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.util.StringConverter;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Set;
 import java.util.function.Consumer;
 
 public class HelloController {
@@ -33,14 +36,16 @@ public class HelloController {
     private Spinner<String> variantSpinner;
 
     private int numberOfUsers;
+    private HashMap<String, String> legendStyle;
 
     public void initialize() {
+        legendStyle = new HashMap<>();
         numberOfUsers = 0;
         ObservableList<String> variantsList = FXCollections.observableArrayList(//
                 "Bullet", "Blitz", "Rapid", "Classical", //
                 "Correspondence", "Crazyhouse", "Chess960", "King of the Hill", //
                 "Three-check", "Antichess", "Atomic", "Horde", "Racing Kings", "Puzzles");
-        SpinnerValueFactory.ListSpinnerValueFactory<String> valueFactory = new SpinnerValueFactory.ListSpinnerValueFactory<String>(variantsList);
+        SpinnerValueFactory.ListSpinnerValueFactory<String> valueFactory = new SpinnerValueFactory.ListSpinnerValueFactory<>(variantsList);
         valueFactory.setValue("Blitz");
         valueFactory.wrapAroundProperty();
         variantSpinner.setValueFactory(valueFactory);
@@ -69,6 +74,8 @@ public class HelloController {
     protected void onSubmitButtonClick() {
         // Username to lower case, since with the lichess api the ID is always lower case
         UpdateLineChart(chart, username.getText().toLowerCase());
+        username.requestFocus();
+        username.selectAll();
     }
 
     //We are requesting from the API, so only want to send one request at a time
@@ -86,52 +93,67 @@ public class HelloController {
             return;
         }
 
-        //We found the user, so increment
-        numberOfUsers++;
 
-        final String displayName = client.users().byId(user).get().username();
+        final String displayName = client.users().byId(user).get().username() + " ";
         final var Result = client.users().ratingHistoryById(user);
 
         Consumer<RatingHistory> addPoint = RatingHistory -> {
-            //Prepare XYChart.Series objects by setting data
-            XYChart.Series<Long, Integer> series = new XYChart.Series<>();
-            series.setName(displayName + " " + RatingHistory.name());
-            for (chariot.model.RatingHistory.DateResult dateResult : RatingHistory.results()) {
-                series.getData().add(new XYChart.Data<>(dateResult.date().toEpochSecond(LocalTime.MIN, ZoneOffset.UTC), dateResult.points()));
-            }
-
             //Only include the selected variant
             if (RatingHistory.name().equals(variantSpinner.getValue())) {
+                //Prepare XYChart.Series objects by setting data
+                XYChart.Series<Long, Integer> series = new XYChart.Series<>();
+                series.setName(displayName + RatingHistory.name());
+
+                //Check if we have already added them
+                if (legendStyle.get(series.getName() + "colorPlayer") != null) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION, series.getName() + " is already added");
+                    alert.show();
+                    return;
+                }
+
+
+                for (chariot.model.RatingHistory.DateResult dateResult : RatingHistory.results()) {
+                    series.getData().add(new XYChart.Data<>(dateResult.date().toEpochSecond(LocalTime.MIN, ZoneOffset.UTC), dateResult.points()));
+                }
+
 
                 //Setting the data to scatter chart
                 lineChart.getData().add(series);
 
                 //Set color for series, nodes and legend.
-                final String variantColor = getVariantColor(RatingHistory.name());
-                final String colorPlayer = getPlayerColor();
+                legendStyle.put(series.getName() + "colorPlayer", getPlayerColor());
+                legendStyle.put(series.getName() + "colorVariant", getVariantColor(RatingHistory.name()));
 
-                System.out.println(RatingHistory.name() + " : " + series.getData().size() + variantSpinner.getValue());
-                System.out.println(displayName + " " + colorPlayer + " " + variantColor);
+
+                System.out.println(RatingHistory.name() + " : " + series.getData().size());
+                System.out.println("colorPlayer" + legendStyle.get(series.getName() + "colorPlayer"));
+                System.out.println("colorVariant" + legendStyle.get(series.getName() + "colorVariant"));
+
 
                 //Style line nodes
                 int index = 0;
                 while (index < series.getData().size()) {
                     XYChart.Data<Long, Integer> dataPoint = series.getData().get(index);
                     Node lineSymbol = dataPoint.getNode().lookup(".chart-line-symbol");
-                    lineSymbol.setStyle("-fx-background-radius: 1px;" +
-                            " -fx-background-color: " + colorPlayer);
+                    lineSymbol.setStyle("-fx-background-radius: 0px;" +
+                            " -fx-background-color: " + legendStyle.get(series.getName() + "colorPlayer"));
                     index++;
                 }
-                //Color lines
-                StringBuilder seriesStyleString = new StringBuilder("-fx-stroke-width: 1; -fx-stroke: " + variantColor);
-                series.getNode().setStyle(seriesStyleString.toString());
 
-                //Color chart legend
-                for (Node n : chart.getChildrenUnmodifiable()) {
-                    if (n.getClass().getSimpleName().equals("Legend")) {
-                        n.setStyle("-fx-background-color:" + colorPlayer);
-                        //-fx-create-symbols: M 100 100L 300 100L 200 300Z;
-                    }
+                //Color lines
+                String seriesStyleString = "-fx-stroke-width: 1; -fx-stroke: " + legendStyle.get(series.getName() + "colorVariant");
+                series.getNode().setStyle(seriesStyleString);
+
+                Set<Node> items = chart.lookupAll("Label.chart-legend-item");
+
+                for (Node item : items) {
+                    Label label = (Label) item;
+                    final Rectangle rectangle = new Rectangle(10, 10, Color.web(legendStyle.get(label.getText() + "colorPlayer")));
+                    final Glow niceEffect = new Glow();
+                    niceEffect.setInput(new Reflection());
+                    rectangle.setEffect(niceEffect);
+                    label.setTextFill(Color.web(legendStyle.get(label.getText() + "colorVariant")));
+                    label.setGraphic(rectangle);
                 }
             }
         };
@@ -143,6 +165,8 @@ public class HelloController {
         } else {
             lineChart.setTitle(displayName + " " + variantSpinner.getValue());
         }
+        //We found the user, so increment the user count
+        numberOfUsers++;
     }
 
     @FXML
@@ -150,6 +174,7 @@ public class HelloController {
         chart.getData().clear();
         chart.setTitle(null);
         numberOfUsers = 0;
+        legendStyle.clear();
     }
 
     @FXML
@@ -175,6 +200,7 @@ public class HelloController {
 
     private String getPlayerColor() {
         return switch (numberOfUsers) {
+            case 0 -> "AQUAMARINE";
             case 1 -> "LAWNGREEN";
             case 2 -> "LIGHTBLUE";
             case 3 -> "DARKMAGENTA";
