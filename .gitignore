@@ -42,3 +42,4 @@ build/
 mvnw
 mvnw.cmd
 .mvn/wrapper/maven-wrapper.properties
+out/artifacts/SimpleGraphApplication_jar/SimpleGraphApplication.jar
